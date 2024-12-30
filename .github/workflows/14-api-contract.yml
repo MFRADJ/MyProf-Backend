@@ -1,0 +1,64 @@
+name: API Contract Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  api-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: Validate OpenAPI Spec
+        run: |
+          ./mvnw springdoc:generate
+          
+      - name: Check API Versioning
+        run: |
+          if ! grep -r "@ApiVersion" src/main/java; then
+            echo "Missing API versioning"
+            exit 1
+          fi
+          
+      - name: Verify API Documentation
+        run: |
+          ./mvnw test -Dtest=*ApiDocumentationTest
+          
+  contract-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run Contract Tests
+        run: |
+          ./mvnw test -Dtest=*ContractTest
+          
+      - name: Validate Response Schemas
+        run: |
+          ./mvnw test -Dtest=*SchemaValidationTest
+          
+      - name: Check API Backwards Compatibility
+        run: |
+          ./mvnw test -Dtest=*CompatibilityTest
+          
+  rate-limiting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Test Rate Limiting
+        run: |
+          ./mvnw test -Dtest=*RateLimitTest
+          
+      - name: Verify Throttling
+        run: |
+          ./mvnw test -Dtest=*ThrottlingTest

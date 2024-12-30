@@ -1,0 +1,56 @@
+name: Monitoring & Observability
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  observability:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: Verify Actuator Endpoints
+        run: |
+          ./mvnw spring-boot:run &
+          sleep 30
+          curl -f http://localhost:8080/actuator/health
+          curl -f http://localhost:8080/actuator/metrics
+          curl -f http://localhost:8080/actuator/prometheus
+          
+      - name: Check Logging Configuration
+        run: |
+          if ! grep -r "logback-spring.xml" src/main/resources; then
+            echo "Missing logback configuration"
+            exit 1
+          fi
+          
+      - name: Validate Distributed Tracing
+        run: |
+          if ! grep -r "spring.sleuth" src/main/resources; then
+            echo "Missing distributed tracing configuration"
+            exit 1
+          fi
+          
+      - name: Check Metrics Implementation
+        run: |
+          ./mvnw test -Dtest=*MetricsTest
+          
+      - name: Validate Health Indicators
+        run: |
+          ./mvnw test -Dtest=*HealthIndicatorTest
+          
+      - name: Check Alert Rules
+        run: |
+          if [ ! -f "monitoring/prometheus/alert-rules.yml" ]; then
+            echo "Missing Prometheus alert rules"
+            exit 1
+          fi

@@ -1,0 +1,30 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/myprof_dev}
+      database: myprof_dev
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    root: INFO
+    com.myprof: DEBUG
+    org.springframework.data.mongodb: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+# Configuration spécifique au développement
+app:
+  security:
+    jwt:
+      expiration: 86400000  # 24 heures
+  cors:
+    allowed-origins: "*"
+  feature-flags:
+    enable-swagger: true
+    enable-dev-tools: true
