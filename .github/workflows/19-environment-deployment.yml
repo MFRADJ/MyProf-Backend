@@ -27,6 +27,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
+      - name: Grant execute permission for mvnw
+        run: chmod +x mvnw
+          
       - name: Build for Dev
         run: |
           ./mvnw clean package -P dev -DskipTests
@@ -52,6 +55,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          
+      - name: Grant execute permission for mvnw
+        run: chmod +x mvnw
           
       - name: Build for Staging
         run: |
@@ -84,6 +90,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          
+      - name: Grant execute permission for mvnw
+        run: chmod +x mvnw
           
       - name: Build for Production
         run: |
