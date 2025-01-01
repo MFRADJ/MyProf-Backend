@@ -13,11 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
     environment: development
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27017:27017
     steps:
       - uses: actions/checkout@v3
       
@@ -37,7 +32,8 @@ jobs:
       - name: Deploy to Dev
         env:
           SPRING_PROFILES_ACTIVE: dev
-          MONGODB_URI: ${{ secrets.DEV_MONGODB_URI }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           echo "Deploying to Development Environment"
           # Commandes de déploiement pour dev
@@ -65,14 +61,16 @@ jobs:
           
       - name: Run Integration Tests
         env:
-          MONGODB_URI: ${{ secrets.STAGING_MONGODB_URI }}
+          MONGODB_URI: ${{ secrets.MONGODB_STAGING_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           ./mvnw verify -P staging
           
       - name: Deploy to Staging
         env:
           SPRING_PROFILES_ACTIVE: staging
-          MONGODB_URI: ${{ secrets.STAGING_MONGODB_URI }}
+          MONGODB_URI: ${{ secrets.MONGODB_STAGING_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           echo "Deploying to Staging Environment"
           # Commandes de déploiement pour staging
@@ -99,13 +97,16 @@ jobs:
           ./mvnw clean package -P prod -DskipTests
           
       - name: Security Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./mvnw verify -P security
+          ./mvnw verify sonar:sonar -P prod
           
       - name: Deploy to Production
         env:
           SPRING_PROFILES_ACTIVE: prod
-          MONGODB_URI: ${{ secrets.PROD_MONGODB_URI }}
+          MONGODB_URI: ${{ secrets.MONGODB_PROD_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           echo "Deploying to Production Environment"
-          # Commandes de déploiement pour prod
+          # Commandes de déploiement pour production

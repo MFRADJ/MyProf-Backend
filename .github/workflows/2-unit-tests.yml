@@ -20,7 +20,7 @@ jobs:
           cache: 'maven'
           
       - name: Run Unit Tests
-        run: ./mvnw test -Dtest="**/*Test.java"
+        run: ./mvnw test -Dtest="**/*Tes!t.java"
         
       - name: Run Service Tests
         run: ./mvnw test -Dtest="**/*ServiceTest.java"
