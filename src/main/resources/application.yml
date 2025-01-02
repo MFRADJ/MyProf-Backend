@@ -1,0 +1,13 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/myprof}
+
+jwt:
+  secret: ${JWT_SECRET:default_dev_only_secret}
+  expiration: 86400000  # 24 heures en millisecondes
+
+logging:
+  level:
+    root: INFO
+    com.MyProf: DEBUG

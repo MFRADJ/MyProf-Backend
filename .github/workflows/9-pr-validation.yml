@@ -1,0 +1,52 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Check Branch Protection
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/{owner}/{repo}/branches/{branch}/protection
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          branch: main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Verify No Merge Conflicts
+        run: |
+          if git merge-base --is-ancestor origin/main HEAD; then
+            echo "No merge conflicts with main"
+          else
+            echo "Merge conflicts detected"
+            exit 1
+          fi
+          
+      - name: Check Required Reviews
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            if (pr.reviews.length < 2) {
+              core.setFailed('At least 2 reviews are required');
+            }
+            
+      - name: Conventional Commits Check
+        uses: wagoid/commitlint-github-action@v5
+        
+      - name: Block Automerge on Draft
+        if: github.event.pull_request.draft == true
+        run: exit 1

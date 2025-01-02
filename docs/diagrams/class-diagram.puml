@@ -1,0 +1,204 @@
+@startuml Class Diagram
+
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+package "Models" {
+    class User {
+        +_id: ObjectId
+        +email: String
+        +password: String
+        +role: UserRole
+        +firstName: String
+        +lastName: String
+        +profilePicture: String
+        +bio: String
+        +specialties: String[]
+        +ratings: Rating[]
+        +availability: TimeSlot[]
+        +createdAt: Date
+        +updatedAt: Date
+    }
+
+    class Course {
+        +_id: ObjectId
+        +title: String
+        +description: String
+        +price: Decimal
+        +level: Level
+        +status: CourseStatus
+        +teacher: Reference<User>
+        +thumbnail: String
+        +tags: String[]
+        +syllabus: Chapter[]
+        +ratings: Rating[]
+        +enrollmentCount: Number
+        +createdAt: Date
+        +updatedAt: Date
+    }
+
+    class Chapter {
+        +_id: ObjectId
+        +title: String
+        +description: String
+        +lessons: Lesson[]
+        +order: Number
+    }
+
+    class Lesson {
+        +_id: ObjectId
+        +title: String
+        +content: String
+        +duration: Number
+        +resources: Resource[]
+        +type: LessonType
+        +videoUrl: String
+        +quizzes: Quiz[]
+        +order: Number
+    }
+
+    class Enrollment {
+        +_id: ObjectId
+        +student: Reference<User>
+        +course: Reference<Course>
+        +status: EnrollmentStatus
+        +progress: Number
+        +completedLessons: ObjectId[]
+        +quizScores: Map<ObjectId, Number>
+        +startDate: Date
+        +completionDate: Date
+        +certificate: String
+    }
+
+    class Payment {
+        +_id: ObjectId
+        +user: Reference<User>
+        +course: Reference<Course>
+        +amount: Decimal
+        +currency: String
+        +status: PaymentStatus
+        +paymentMethod: String
+        +transactionId: String
+        +receipt: String
+        +createdAt: Date
+    }
+
+    class LiveSession {
+        +_id: ObjectId
+        +teacher: Reference<User>
+        +students: Reference<User>[]
+        +course: Reference<Course>
+        +startTime: Date
+        +duration: Number
+        +status: SessionStatus
+        +meetingUrl: String
+        +recording: String
+        +materials: Resource[]
+    }
+
+    class Resource {
+        +_id: ObjectId
+        +title: String
+        +type: ResourceType
+        +url: String
+        +size: Number
+        +format: String
+    }
+
+    class Quiz {
+        +_id: ObjectId
+        +title: String
+        +questions: Question[]
+        +duration: Number
+        +passingScore: Number
+    }
+
+    class Rating {
+        +user: Reference<User>
+        +score: Number
+        +comment: String
+        +createdAt: Date
+    }
+
+    class TimeSlot {
+        +day: String
+        +startTime: String
+        +endTime: String
+        +isRecurring: Boolean
+    }
+}
+
+package "Enums" {
+    enum UserRole {
+        STUDENT
+        TEACHER
+        PARENT
+        ADMIN
+    }
+
+    enum Level {
+        BEGINNER
+        INTERMEDIATE
+        ADVANCED
+        EXPERT
+    }
+
+    enum CourseStatus {
+        DRAFT
+        PUBLISHED
+        ARCHIVED
+        SUSPENDED
+    }
+
+    enum EnrollmentStatus {
+        PENDING
+        ACTIVE
+        COMPLETED
+        CANCELLED
+    }
+
+    enum PaymentStatus {
+        PENDING
+        COMPLETED
+        FAILED
+        REFUNDED
+    }
+
+    enum SessionStatus {
+        SCHEDULED
+        LIVE
+        COMPLETED
+        CANCELLED
+    }
+
+    enum LessonType {
+        VIDEO
+        DOCUMENT
+        INTERACTIVE
+        LIVE
+    }
+
+    enum ResourceType {
+        PDF
+        VIDEO
+        AUDIO
+        IMAGE
+        CODE
+    }
+}
+
+User "1" -- "*" Course : creates
+User "1" -- "*" Enrollment : has
+Course "1" -- "*" Chapter : contains
+Chapter "1" -- "*" Lesson : contains
+Course "1" -- "*" Enrollment : has
+User "1" -- "*" Payment : makes
+Course "1" -- "*" Payment : for
+User "1" -- "*" LiveSession : teaches
+User "*" -- "*" LiveSession : attends
+Course "1" -- "*" LiveSession : hosts
+
+@enduml

@@ -1,0 +1,40 @@
+@startuml Authentication Flow
+
+skinparam sequence {
+    ArrowColor Black
+    LifeLineBackgroundColor White
+    ParticipantBackgroundColor White
+    ParticipantBorderColor Black
+    BoxBorderColor Black
+}
+
+actor User
+participant "Frontend" as F
+participant "Auth Service" as A
+participant "User Service" as U
+database "Database" as D
+
+User -> F: Login Request
+activate F
+
+F -> A: Authenticate
+activate A
+
+A -> D: Validate Credentials
+activate D
+D --> A: User Data
+deactivate D
+
+alt Valid Credentials
+    A -> A: Generate JWT
+    A --> F: Return JWT Token
+    F --> User: Login Success
+else Invalid Credentials
+    A --> F: Auth Error
+    F --> User: Login Failed
+end
+
+deactivate A
+deactivate F
+
+@enduml

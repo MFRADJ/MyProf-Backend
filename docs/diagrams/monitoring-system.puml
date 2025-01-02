@@ -1,0 +1,65 @@
+@startuml Monitoring System
+
+skinparam component {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+package "Applications" {
+    [Services] as services
+    [Databases] as dbs
+    [Infrastructure] as infra
+}
+
+package "Monitoring Tools" {
+    [Prometheus] as prom
+    [Grafana] as grafana
+    [ELK Stack] as elk
+    database "Time Series DB" as tsdb
+}
+
+package "Log Management" {
+    [Logstash] as logstash
+    [Elasticsearch] as es
+    [Kibana] as kibana
+}
+
+package "Alerting" {
+    [Alert Manager] as alert
+    [PagerDuty] as pager
+    [Slack] as slack
+    [Email] as email
+}
+
+package "Dashboards" {
+    [System Health] as health
+    [Business Metrics] as business
+    [User Analytics] as analytics
+}
+
+services --> prom
+dbs --> prom
+infra --> prom
+
+services --> logstash
+dbs --> logstash
+infra --> logstash
+
+prom --> tsdb
+tsdb --> grafana
+logstash --> es
+es --> kibana
+
+grafana --> alert
+kibana --> alert
+
+alert --> pager
+alert --> slack
+alert --> email
+
+grafana --> health
+grafana --> business
+kibana --> analytics
+
+@enduml

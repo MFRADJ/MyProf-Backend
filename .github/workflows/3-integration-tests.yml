@@ -1,0 +1,51 @@
+name: Integration Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+          
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+          
+      - name: Run API Integration Tests
+        run: ./mvnw test -Dtest="**/*IT.java"
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          MONGODB_URI: mongodb://localhost:27017/myprof_test
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          
+      - name: Run Repository Tests
+        run: ./mvnw test -Dtest="**/*RepositoryTest.java"
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          MONGODB_URI: mongodb://localhost:27017/myprof_test
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        
+      - name: Generate Integration Test Report
+        if: always()
+        run: ./mvnw failsafe:integration-test failsafe:verify
+        
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-results
+          path: target/failsafe-reports/

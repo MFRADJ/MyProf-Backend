@@ -1,0 +1,67 @@
+@startuml System Overview
+
+skinparam componentStyle uml2
+skinparam component {
+  BackgroundColor White
+  BorderColor Black
+  ArrowColor Black
+}
+
+package "Frontend" {
+  [Web App] as web
+  [Mobile App] as mobile
+  [PWA] as pwa
+}
+
+package "Backend Monolith" {
+  package "Controllers" {
+    [AuthController] as authCtrl
+    [UserController] as userCtrl
+    [CourseController] as courseCtrl
+    [PaymentController] as paymentCtrl
+    [StreamingController] as streamCtrl
+  }
+
+  package "Services" {
+    [AuthService] as authSvc
+    [UserService] as userSvc
+    [CourseService] as courseSvc
+    [PaymentService] as paymentSvc
+    [StreamingService] as streamSvc
+  }
+
+  package "Repositories" {
+    [UserRepository] as userRepo
+    [CourseRepository] as courseRepo
+    [PaymentRepository] as paymentRepo
+  }
+}
+
+database "PostgreSQL" as postgres
+database "Redis Cache" as redis
+storage "File Storage" as files
+
+web --> authCtrl
+mobile --> authCtrl
+pwa --> authCtrl
+
+authCtrl --> authSvc
+userCtrl --> userSvc
+courseCtrl --> courseSvc
+paymentCtrl --> paymentSvc
+streamCtrl --> streamSvc
+
+authSvc --> userRepo
+userSvc --> userRepo
+courseSvc --> courseRepo
+paymentSvc --> paymentRepo
+streamSvc --> files
+
+userRepo --> postgres
+courseRepo --> postgres
+paymentRepo --> postgres
+
+authSvc ..> redis : cache
+courseSvc ..> redis : cache
+
+@enduml
