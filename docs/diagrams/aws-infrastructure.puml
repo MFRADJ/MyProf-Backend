@@ -1,0 +1,75 @@
+@startuml AWS Infrastructure
+
+skinparam component {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+cloud "AWS Cloud" {
+    package "Edge Services" {
+        [Route 53] as route53
+        [CloudFront] as cloudfront
+        [WAF] as waf
+    }
+
+    package "Application" {
+        [Application Load Balancer] as alb
+        package "Auto Scaling Group" {
+            [EC2 Instance 1] as ec21
+            [EC2 Instance 2] as ec22
+        }
+    }
+
+    package "Storage" {
+        database "RDS PostgreSQL" as rds {
+            [Master] as master
+            [Standby] as standby
+        }
+        database "ElastiCache Redis" as redis
+        storage "S3" as s3 {
+            [Media Files] as media
+            [Backups] as backup
+        }
+    }
+
+    package "Monitoring" {
+        [CloudWatch] as cloudwatch
+        [CloudTrail] as cloudtrail
+    }
+
+    package "Security" {
+        [IAM] as iam
+        [KMS] as kms
+        [Secrets Manager] as secrets
+    }
+}
+
+route53 --> cloudfront
+cloudfront --> waf
+waf --> alb
+alb --> ec21
+alb --> ec22
+
+ec21 --> master
+ec22 --> master
+master --> standby : replication
+
+ec21 --> redis
+ec22 --> redis
+
+ec21 --> s3
+ec22 --> s3
+
+cloudwatch --> ec21
+cloudwatch --> ec22
+cloudwatch --> rds
+cloudwatch --> redis
+
+iam --> ec21
+iam --> ec22
+kms --> s3
+secrets --> ec21
+secrets --> ec22
+
+@enduml

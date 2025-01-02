@@ -1,0 +1,47 @@
+@startuml CI/CD Pipeline
+
+skinparam component {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+rectangle "Development" {
+    [Git Push] as push
+}
+
+rectangle "Build & Test" {
+    [Build] as build
+    [Unit Tests] as unit
+    [Integration Tests] as integration
+    [Code Quality] as quality
+    [Security Scan] as security
+}
+
+rectangle "Staging" {
+    [Deploy to Staging] as staging
+    [E2E Tests] as e2e
+    [Performance Tests] as perf
+}
+
+rectangle "Production" {
+    [Canary Deploy] as canary
+    [Full Deploy] as prod
+    [Health Check] as health
+}
+
+push --> build
+build --> unit
+unit --> integration
+integration --> quality
+quality --> security
+
+security --> staging
+staging --> e2e
+e2e --> perf
+
+perf --> canary
+canary --> prod
+prod --> health
+
+@enduml

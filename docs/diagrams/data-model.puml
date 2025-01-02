@@ -1,0 +1,91 @@
+@startuml Data Model
+
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+class User {
+    +id: Long
+    +email: String
+    +password: String
+    +role: UserRole
+    +firstName: String
+    +lastName: String
+    +createdAt: DateTime
+    +updatedAt: DateTime
+}
+
+class Course {
+    +id: Long
+    +title: String
+    +description: String
+    +price: Decimal
+    +level: Level
+    +status: CourseStatus
+    +teacherId: Long
+    +createdAt: DateTime
+    +updatedAt: DateTime
+}
+
+class Lesson {
+    +id: Long
+    +courseId: Long
+    +title: String
+    +content: String
+    +duration: Integer
+    +order: Integer
+    +filePath: String
+    +createdAt: DateTime
+}
+
+class Enrollment {
+    +id: Long
+    +userId: Long
+    +courseId: Long
+    +status: EnrollmentStatus
+    +progress: Integer
+    +startDate: DateTime
+    +completionDate: DateTime
+}
+
+class Payment {
+    +id: Long
+    +userId: Long
+    +courseId: Long
+    +amount: Decimal
+    +currency: String
+    +status: PaymentStatus
+    +paymentMethod: String
+    +transactionId: String
+    +createdAt: DateTime
+}
+
+enum UserRole {
+    STUDENT
+    TEACHER
+    PARENT
+    ADMIN
+}
+
+enum Level {
+    BEGINNER
+    INTERMEDIATE
+    ADVANCED
+}
+
+enum CourseStatus {
+    DRAFT
+    PUBLISHED
+    ARCHIVED
+}
+
+User "1" -- "*" Course : creates
+User "1" -- "*" Enrollment : has
+Course "1" -- "*" Lesson : contains
+Course "1" -- "*" Enrollment : has
+User "1" -- "*" Payment : makes
+Course "1" -- "*" Payment : for
+
+@enduml

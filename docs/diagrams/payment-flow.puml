@@ -1,0 +1,58 @@
+@startuml Payment Flow
+
+skinparam sequence {
+    ArrowColor Black
+    LifeLineBackgroundColor White
+    ParticipantBackgroundColor White
+    ParticipantBorderColor Black
+    BoxBorderColor Black
+}
+
+actor User
+participant "Frontend" as F
+participant "Payment Service" as P
+participant "Stripe API" as S
+database "Database" as D
+
+User -> F: Initiate Payment
+activate F
+
+F -> P: Create Payment Intent
+activate P
+
+P -> S: Initialize Payment
+activate S
+S --> P: Payment Intent
+deactivate S
+
+P -> D: Save Payment Intent
+activate D
+D --> P: Saved
+deactivate D
+
+P --> F: Payment Intent + Client Secret
+F --> User: Payment Form
+
+User -> F: Submit Payment
+F -> S: Confirm Payment
+activate S
+
+alt Payment Success
+    S --> F: Payment Confirmed
+    F -> P: Verify Payment
+    P -> D: Update Payment Status
+    P --> F: Success
+    F --> User: Payment Complete
+else Payment Failed
+    S --> F: Payment Failed
+    F -> P: Cancel Payment
+    P -> D: Update Payment Status
+    P --> F: Failed
+    F --> User: Payment Failed
+end
+
+deactivate S
+deactivate P
+deactivate F
+
+@enduml
