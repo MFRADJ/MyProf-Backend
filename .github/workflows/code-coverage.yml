@@ -25,9 +25,7 @@ jobs:
           cache: maven
       
       - name: Generate Coverage Report
-        run: |
-          mvn jacoco:prepare-agent test jacoco:report
-          mvn jacoco:check -Djacoco.minimum.coverage=0.70
+        run: mvn clean verify
           
       - name: Upload Coverage Report
         if: always()
