@@ -1,0 +1,27 @@
+# Code Owners for MyProf-Backend
+# This file defines who should review changes to different parts of the codebase
+
+# Default owners for everything in the repo
+* @senior-team-lead
+
+# Backend core
+/src/main/java/com/myprof/core/ @backend-leads
+
+# API endpoints
+/src/main/java/com/myprof/api/ @api-team-lead
+
+# Database
+/src/main/java/com/myprof/repository/ @database-team
+
+# Security
+/src/main/java/com/myprof/security/ @security-team
+
+# Configuration
+*.yml @devops-team
+*.properties @devops-team
+
+# Tests
+/src/test/ @qa-team-lead
+
+# Documentation
+/docs/ @technical-writers

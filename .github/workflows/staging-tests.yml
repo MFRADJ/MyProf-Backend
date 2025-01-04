@@ -1,0 +1,72 @@
+name: Staging Environment Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - production
+
+jobs:
+  comprehensive-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-benchmark locust pytest-mongodb
+          
+      - name: Run all tests
+        env:
+          MONGODB_URI: ${{ secrets.STAGING_MONGODB_URI }}
+        run: |
+          pytest tests/ --cov=./src --cov-report=xml --benchmark-only
+          
+      - name: Performance tests
+        env:
+          MONGODB_URI: ${{ secrets.STAGING_MONGODB_URI }}
+        run: |
+          locust --headless -f tests/performance/locustfile.py --users 100 --spawn-rate 10 -H http://staging-api.myprof.com --run-time 5m
+          
+      - name: End-to-end tests
+        env:
+          MONGODB_URI: ${{ secrets.STAGING_MONGODB_URI }}
+        run: |
+          pytest tests/e2e
+          
+      - name: Security scan
+        run: |
+          pip install safety bandit
+          safety check
+          bandit -r ./src -ll
+          
+      - name: MongoDB indexes verification
+        env:
+          MONGODB_URI: ${{ secrets.STAGING_MONGODB_URI }}
+        run: |
+          python scripts/verify_indexes.py
+          
+      - name: Data migration verification
+        env:
+          MONGODB_URI: ${{ secrets.STAGING_MONGODB_URI }}
+        run: |
+          python scripts/verify_migrations.py
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: staging-test-results
+          path: |
+            coverage.xml
+            locust-stats.html
+            test-results/
