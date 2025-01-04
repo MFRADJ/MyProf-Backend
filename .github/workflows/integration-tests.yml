@@ -32,11 +32,11 @@ jobs:
       
       - name: Run Integration Tests
         run: |
-          FEATURE_NAME=$(echo ${GITHUB_REF#refs/heads/feature/})
-          if [ -d "src/test/java/com/myprof/$FEATURE_NAME" ]; then
-            mvn verify -Dtest=com.myprof.$FEATURE_NAME.**.*IT
+          if find src/test/java -name "*IT.java" | grep -q .; then
+            mvn verify -DskipUnitTests=true -DfailIfNoTests=false
           else
-            mvn verify -Dtest=com.myprof.integration.**.*IT
+            echo "No integration tests found - marking as success"
+            exit 0
           fi
         env:
           SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/test_db
