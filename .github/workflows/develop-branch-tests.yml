@@ -1,0 +1,69 @@
+name: Develop Branch Tests
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-mongodb bandit safety
+          
+      - name: Run all tests
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test_db
+        run: |
+          pytest tests/ --cov=./src --cov-report=xml
+          
+      - name: Security check
+        run: |
+          bandit -r ./src
+          safety check
+          
+      - name: Static type checking
+        run: |
+          pip install mypy
+          mypy src/
+          
+      - name: Integration tests
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test_db
+        run: |
+          pytest tests/integration
+          
+      - name: MongoDB data validation
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test_db
+        run: |
+          python scripts/validate_schemas.py
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: |
+            coverage.xml
+            test-results/

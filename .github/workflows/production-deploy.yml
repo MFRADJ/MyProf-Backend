@@ -1,0 +1,79 @@
+name: Production Deployment
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  final-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-mongodb
+          
+      - name: Verify dependencies
+        run: |
+          pip check
+          pip freeze > requirements.lock
+          
+      - name: Configuration validation
+        env:
+          MONGODB_URI: ${{ secrets.PROD_MONGODB_URI }}
+        run: |
+          python scripts/validate_config.py
+          
+      - name: MongoDB indexes and schema verification
+        env:
+          MONGODB_URI: ${{ secrets.PROD_MONGODB_URI }}
+        run: |
+          python scripts/verify_indexes.py
+          python scripts/validate_schemas.py
+          
+      - name: Smoke tests
+        env:
+          MONGODB_URI: ${{ secrets.PROD_MONGODB_URI }}
+        run: |
+          pytest tests/smoke
+          
+  deploy:
+    needs: final-verification
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+          
+      - name: Deploy monolithic application
+        env:
+          MONGODB_URI: ${{ secrets.PROD_MONGODB_URI }}
+        run: |
+          # Add your deployment commands here
+          echo "Deploying monolithic application to production..."
+          # Example: aws elasticbeanstalk update-environment
+          
+      - name: Post-deployment checks
+        env:
+          MONGODB_URI: ${{ secrets.PROD_MONGODB_URI }}
+        run: |
+          # Add health checks
+          python scripts/health_check.py
+          # Add monitoring setup
+          python scripts/setup_monitoring.py
