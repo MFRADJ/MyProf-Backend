@@ -1,0 +1,67 @@
+@startuml Authentication Flow
+
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+
+actor Client
+boundary "API Gateway" as Gateway
+control "AuthController" as Controller
+control "SecurityFilter" as Filter
+control "JwtAuthFilter" as JwtFilter
+
+package "Services" {
+    component "AuthService" as AuthService
+    component "TokenService" as TokenService
+    component "UserService" as UserService
+    component "JwtService" as JwtService
+}
+
+database "MongoDB" as DB {
+    collections "Users" as Users
+    collections "RefreshTokens" as Tokens
+}
+
+' Authentication Flow
+Client -> Gateway: HTTP Request
+Gateway -> Filter: Forward Request
+Filter -> JwtFilter: Check JWT
+JwtFilter -> JwtService: Validate Token
+
+alt Valid Token
+    JwtFilter -> UserService: Load User
+    UserService -> Users: Find User
+    Users --> UserService: User Details
+    UserService --> JwtFilter: User Details
+    JwtFilter -> Filter: Authentication OK
+    Filter -> Controller: Process Request
+else Invalid Token
+    JwtFilter -> Controller: 401 Unauthorized
+end
+
+' Login Flow
+Client -> Controller: POST /api/auth/login
+Controller -> AuthService: Login Request
+AuthService -> UserService: Validate Credentials
+UserService -> Users: Find User
+Users --> UserService: User Details
+AuthService -> JwtService: Generate Access Token
+AuthService -> TokenService: Generate Refresh Token
+TokenService -> Tokens: Save Token
+Controller --> Client: JWT + Refresh Token
+
+' Refresh Flow
+Client -> Controller: POST /api/auth/refresh-token
+Controller -> TokenService: Validate Refresh Token
+TokenService -> Tokens: Find Token
+Tokens --> TokenService: Token Details
+TokenService -> JwtService: Generate New Access Token
+TokenService -> Tokens: Update Token
+Controller --> Client: New JWT + Refresh Token
+
+' Logout Flow
+Client -> Controller: POST /api/auth/logout
+Controller -> TokenService: Revoke Token
+TokenService -> Tokens: Mark Token as Revoked
+Controller --> Client: 200 OK
+
+@enduml

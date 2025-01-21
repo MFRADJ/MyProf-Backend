@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SuppressWarnings("checkstyle:FinalClass")
 @SpringBootApplication
-public  class MyProfBackendApplication {
-    
+public class MyProfBackendApplication {
     /**
      * Private constructor to hide the implicit public one.
      */
