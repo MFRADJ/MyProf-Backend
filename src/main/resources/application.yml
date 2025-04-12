@@ -1,13 +1,36 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/myprof}
-
-jwt:
-  secret: ${JWT_SECRET:default_dev_only_secret}
-  expiration: 86400000  # 24 heures en millisecondes
+      uri: ${MONGODB_URI:mongodb://localhost:27017/myprof_db}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: fradjmohamed1@gmail.com
+    password: klkvvocfrdfzgjzq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+      expiration: 86400000
+      refresh-token:
+        expiration: 604800000
+  mailing:
+    frontend:
+      activation-url: ${FRONTEND_URL:http://localhost:3000}/activate
 
 logging:
   level:
     root: INFO
     com.MyProf: DEBUG
+
+
+

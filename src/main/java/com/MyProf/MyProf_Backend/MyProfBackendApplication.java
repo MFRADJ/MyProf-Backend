@@ -2,19 +2,15 @@ package com.MyProf.MyProf_Backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * Main Spring Boot Application class.
  */
 @SuppressWarnings("checkstyle:FinalClass")
 @SpringBootApplication
+@EnableMongoRepositories(basePackages = {"com.MyProf.MyProf_Backend.user", "com.MyProf.MyProf_Backend.roles"})
 public class MyProfBackendApplication {
-    /**
-     * Private constructor to hide the implicit public one.
-     */
-    private MyProfBackendApplication() {
-    }
-
     /**
      * Main method to start the application.
      *
