@@ -1,0 +1,38 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+      database: myprof_prod
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+logging:
+  level:
+    root: WARN
+    com.myprof: INFO
+    org.springframework.data.mongodb: WARN
+  file:
+    name: /var/log/myprof/application.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /management
+
+# Configuration spécifique à la production
+app:
+  security:
+    jwt:
+      expiration: 3600000  # 1 heure
+  cors:
+    allowed-origins: https://myprof.com
+  feature-flags:
+    enable-swagger: false
+    enable-dev-tools: false
+  cache:
+    enabled: true
+    ttl: 3600
