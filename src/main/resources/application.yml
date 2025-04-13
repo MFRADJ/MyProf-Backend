@@ -1,36 +1,23 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
 spring:
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/myprof_db}
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: fradjmohamed1@gmail.com
-    password: klkvvocfrdfzgjzq
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-application:
+      host: localhost
+      port: 27017
+      database: myprof_db
+      auto-index-creation: true
+
   security:
     jwt:
-      secret-key: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
-      expiration: 86400000
-      refresh-token:
-        expiration: 604800000
-  mailing:
-    frontend:
-      activation-url: ${FRONTEND_URL:http://localhost:3000}/activate
+      secret: ${JWT_SECRET:your-256-bit-secret-key-here}
+      expiration: 86400000 # 24 hours in milliseconds
 
 logging:
   level:
-    root: INFO
-    com.MyProf: DEBUG
-
-
-
+    org.springframework.data.mongodb: INFO
+    org.springframework.security: INFO
+    fr.myprof.backend: DEBUG
