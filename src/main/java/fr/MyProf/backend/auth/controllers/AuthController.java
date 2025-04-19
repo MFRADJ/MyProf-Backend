@@ -1,9 +1,9 @@
-package fr.MyProf.backend.controller;
+package fr.MyProf.backend.auth.controllers;
 
-import fr.MyProf.backend.dto.AuthResponse;
-import fr.MyProf.backend.dto.LoginRequest;
-import fr.MyProf.backend.dto.RegisterRequest;
-import fr.MyProf.backend.service.AuthService;
+import fr.MyProf.backend.auth.dto.AuthResponse;
+import fr.MyProf.backend.auth.dto.LoginRequest;
+import fr.MyProf.backend.auth.dto.RegisterRequest;
+import fr.MyProf.backend.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

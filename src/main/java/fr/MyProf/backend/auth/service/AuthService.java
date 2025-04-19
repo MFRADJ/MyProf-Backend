@@ -1,10 +1,10 @@
-package fr.MyProf.backend.service;
+package fr.MyProf.backend.auth.service;
 
-import fr.MyProf.backend.dto.AuthResponse;
-import fr.MyProf.backend.dto.LoginRequest;
-import fr.MyProf.backend.dto.RegisterRequest;
-import fr.MyProf.backend.model.User;
-import fr.MyProf.backend.repository.UserRepository;
+import fr.MyProf.backend.auth.dto.AuthResponse;
+import fr.MyProf.backend.auth.dto.LoginRequest;
+import fr.MyProf.backend.auth.dto.RegisterRequest;
+import fr.MyProf.backend.users.models.User;
+import fr.MyProf.backend.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

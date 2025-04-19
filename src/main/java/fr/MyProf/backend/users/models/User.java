@@ -1,5 +1,6 @@
-package fr.MyProf.backend.model;
+package fr.MyProf.backend.users.models;
 
+import fr.MyProf.backend.users.Role;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;

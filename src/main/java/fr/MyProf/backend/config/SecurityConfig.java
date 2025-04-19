@@ -1,7 +1,7 @@
 package fr.MyProf.backend.config;
 
-import fr.MyProf.backend.security.JwtAuthenticationFilter;
-import fr.MyProf.backend.service.CustomUserDetailsService;
+import fr.MyProf.backend.auth.security.JwtAuthenticationFilter;
+import fr.MyProf.backend.auth.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

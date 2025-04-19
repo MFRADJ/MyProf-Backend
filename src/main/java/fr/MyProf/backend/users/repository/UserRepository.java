@@ -1,6 +1,6 @@
-package fr.MyProf.backend.repository;
+package fr.MyProf.backend.users.repository;
 
-import fr.MyProf.backend.model.User;
+import fr.MyProf.backend.users.models.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package fr.MyProf.backend.dto;
+package fr.MyProf.backend.auth.dto;
 
 import lombok.Builder;
 import lombok.Data;

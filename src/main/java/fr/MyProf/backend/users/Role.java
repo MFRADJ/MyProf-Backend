@@ -1,4 +1,4 @@
-package fr.MyProf.backend.model;
+package fr.MyProf.backend.users;
 
 public enum Role {
     ADMIN,

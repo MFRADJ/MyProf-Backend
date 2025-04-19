@@ -1,7 +1,7 @@
-package fr.MyProf.backend.security;
+package fr.MyProf.backend.auth.security;
 
-import fr.MyProf.backend.service.CustomUserDetailsService;
-import fr.MyProf.backend.service.JwtService;
+import fr.MyProf.backend.auth.service.CustomUserDetailsService;
+import fr.MyProf.backend.auth.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

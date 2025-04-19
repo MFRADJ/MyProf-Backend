@@ -1,6 +1,6 @@
-package fr.MyProf.backend.service;
+package fr.MyProf.backend.auth.service;
 
-import fr.MyProf.backend.repository.UserRepository;
+import fr.MyProf.backend.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

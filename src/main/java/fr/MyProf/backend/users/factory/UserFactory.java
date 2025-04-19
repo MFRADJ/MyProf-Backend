@@ -1,6 +1,7 @@
-package fr.MyProf.backend.factory;
+package fr.MyProf.backend.users.factory;
 
-import fr.MyProf.backend.model.*;
+import fr.MyProf.backend.users.*;
+import fr.MyProf.backend.users.models.*;
 
 public class UserFactory {
     

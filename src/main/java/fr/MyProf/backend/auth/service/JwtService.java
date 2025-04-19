@@ -1,4 +1,4 @@
-package fr.MyProf.backend.service;
+package fr.MyProf.backend.auth.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

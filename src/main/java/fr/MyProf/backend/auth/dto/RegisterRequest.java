@@ -1,6 +1,6 @@
-package fr.MyProf.backend.dto;
+package fr.MyProf.backend.auth.dto;
 
-import fr.MyProf.backend.model.Role;
+import fr.MyProf.backend.users.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
