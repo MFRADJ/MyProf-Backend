@@ -1,13 +1,23 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
 spring:
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/myprof}
+      host: localhost
+      port: 27017
+      database: myprof_db
+      auto-index-creation: true
 
-jwt:
-  secret: ${JWT_SECRET:default_dev_only_secret}
-  expiration: 86400000  # 24 heures en millisecondes
+  security:
+    jwt:
+      secret: ${JWT_SECRET:your-256-bit-secret-key-here}
+      expiration: 86400000 # 24 hours in milliseconds
 
 logging:
   level:
-    root: INFO
-    com.MyProf: DEBUG
+    org.springframework.data.mongodb: INFO
+    org.springframework.security: INFO
+    fr.myprof.backend: DEBUG

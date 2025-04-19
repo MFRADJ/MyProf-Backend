@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/myprof_dev}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/myprof}
       database: myprof_dev
   jpa:
     show-sql: true
